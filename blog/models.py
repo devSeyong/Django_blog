@@ -15,7 +15,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255)  # 게시글 제목
     content = models.TextField()  # 게시글 내용
     category = models.ForeignKey(Category, on_delete=models.CASCADE)  # 카테고리 참조
-    author = models.ForeignKey(User, on_delete=models.CASCADE)  # 작성자(User 참조)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # null 허용
     created_at = models.DateTimeField(auto_now_add=True)  # 작성일
     updated_at = models.DateTimeField(auto_now=True)  # 수정일
 
