@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+AUTH_USER_MODEL = "accounts.User"  # 사용자 모델 지정
 
 # Application definition
 
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "blog",
-]
+]  # accounts, blog 앱 추가
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
