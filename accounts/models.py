@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse  # ✅ URL 역방향 매핑을 위해 추가
 
 class User(AbstractUser):
     username = models.CharField(max_length=30, unique=True)  # 아이디
@@ -32,3 +33,7 @@ class User(AbstractUser):
         else:
             self.last_name = name_parts[0]
             self.first_name = " ".join(name_parts[1:])
+
+    def get_absolute_url(self):
+        """작성자의 프로필 페이지로 이동하는 URL 반환"""
+        return reverse("user_profile", args=[self.pk])  # ✅ 추가된 부분

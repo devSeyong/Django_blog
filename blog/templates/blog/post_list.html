@@ -9,7 +9,13 @@
     {% for post in posts %}
         <li class="list-group-item">
             <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>  
-            <span class="text-muted">작성자: {{ post.author.username }}</span>
+
+            {% if user.is_authenticated %}
+                <span class="text-muted">아이디: <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a></span>
+            {% else %}
+                <span class="text-muted">작성자: {{ post.author.username }}</span>
+            {% endif %}
+
             <span class="text-muted"> | 작성일: {{ post.created_at|date:"Y-m-d H:i" }}</span>
         </li>
     {% empty %}
