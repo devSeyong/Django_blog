@@ -1,0 +1,13 @@
+{% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
+
+{% block content %}
+<h1>게시글 수정</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- ✅ Django 폼 자동 렌더링 -->
+    <button type="submit" class="btn btn-success">수정 완료</button>
+</form>
+
+<a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">게시글 보기</a>
+{% endblock %}

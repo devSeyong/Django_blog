@@ -1,0 +1,22 @@
+{% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
+
+{% block content %}
+<h1>{{ post.title }}</h1>  <!-- ✅ 게시글 제목 표시 -->
+<p class="text-muted">작성자: {{ post.author.username }} | 작성일: {{ post.created_at|date:"Y-m-d H:i" }}</p>
+
+<hr>
+
+<p>{{ post.content|linebreaks }}</p>  <!-- ✅ 게시글 내용 표시 (줄바꿈 적용) -->
+
+<!-- ✅ 수정 및 삭제 버튼 (작성자만 보이도록 설정 가능) -->
+{% if user == post.author %}
+    <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">수정</a>
+
+    <form action="{% url 'post_delete' post.pk %}" method="post" style="display: inline;">
+        {% csrf_token %}  <!-- ✅ CSRF 토큰 추가 -->
+        <button type="submit" class="btn btn-danger">삭제</button>
+    </form>
+{% endif %}
+
+<a href="{% url 'post_list' %}" class="btn btn-secondary">목록으로 돌아가기</a>
+{% endblock %}

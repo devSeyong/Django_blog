@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% if object %}게시글 수정{% else %}새 게시글 작성{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div>
+        <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+        {{ form.title }}
+    </div>
+
+    <div>
+        <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+        {{ form.category }}  <!-- ✅ 카테고리 선택 드롭다운 추가 -->
+    </div>
+
+    <div>
+        <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+        {{ form.content }}
+    </div>
+
+    <button type="submit" class="btn btn-success">저장하기</button>
+</form>
+
+<a href="{% url 'post_list' %}" class="btn btn-secondary">목록으로 돌아가기</a>
+{% endblock %}

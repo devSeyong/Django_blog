@@ -2,5 +2,18 @@
 
 {% block content %}
 <h1>게시글 목록</h1>
-<p>여기에 게시글 목록이 표시됩니다.</p>
+
+<a href="{% url 'post_create' %}" class="btn btn-primary">새 게시글 작성</a>  <!-- ✅ 글 작성 버튼 -->
+
+<ul class="list-group mt-3">
+    {% for post in posts %}
+        <li class="list-group-item">
+            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>  
+            <span class="text-muted">작성자: {{ post.author.username }}</span>
+            <span class="text-muted"> | 작성일: {{ post.created_at|date:"Y-m-d H:i" }}</span>
+        </li>
+    {% empty %}
+        <li class="list-group-item text-center">게시글이 없습니다.</li>
+    {% endfor %}
+</ul>
 {% endblock %}
