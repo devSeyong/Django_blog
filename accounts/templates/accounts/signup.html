@@ -5,7 +5,6 @@
 
 <form method="post">
     {% csrf_token %}
-    
     <div>
         <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
         {{ form.username }}
@@ -24,6 +23,11 @@
     <div>
         <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
         {{ form.password2 }}
+    </div>
+
+    <div>
+        <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+        {{ form.bio }}
     </div>
 
     <button type="submit">가입하기</button>

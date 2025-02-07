@@ -11,8 +11,8 @@
             <a class="navbar-brand" href="{% url 'post_list' %}">블로그</a>
             <div class="d-flex">
                 {% if user.is_authenticated %}
-                    <span class="nav-link">안녕하세요, {{ user.username }}님!</span>
-                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    <span class="nav-link">{{ user.username }}님 환영합니다!</span>
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-danger">로그아웃</button>
                     </form>
