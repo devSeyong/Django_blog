@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>프로필</h1>
+
+    {% if user.profile_image %}
+        <div>
+            <img src="{{ user.profile_image.url }}" alt="프로필 사진" width="150">
+        </div>
+    {% else %}
+        <p>프로필 사진이 없습니다.</p>
+    {% endif %}
+
+    <p><strong>아이디:</strong> {{ user.username }}</p>
+    <p><strong>이메일:</strong> {{ user.email }}</p>
+    <p><strong>이름:</strong> {{ user.full_name }}</p>
+    <p><strong>자기소개:</strong> {{ user.bio }}</p>
+
+    <a href="{% url 'profile_edit' %}" class="btn btn-primary">프로필 수정</a>
+</div>
+{% endblock %}

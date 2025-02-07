@@ -119,12 +119,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]  # 정적 파일 디렉토리 추가
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"  # 미디어 파일 디렉토리 추가
+
+if DEBUG:
+    import mimetypes
+    mimetypes.add_type("image/svg+xml", ".svg", True)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = '/blog'  # 로그인 후 이동할 URL
+LOGIN_REDIRECT_URL = "/blog"  # 로그인 후 이동할 URL
 
-LOGIN_URL = '/accounts/login/'  # 로그인 URL
+LOGIN_URL = "/accounts/login/"  # 로그인 URL
