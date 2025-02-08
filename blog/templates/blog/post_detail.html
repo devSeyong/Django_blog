@@ -1,22 +1,40 @@
 {% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
 
 {% block content %}
-<h1>{{ post.title }}</h1>  <!-- ✅ 게시글 제목 표시 -->
-<p class="text-muted">작성자: {{ post.author.username }} | 작성일: {{ post.created_at|date:"Y-m-d H:i" }}</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="bg-light p-5 rounded-3 shadow-sm">  <!-- ✅ 부드러운 배경 적용 -->
+                <h1 class="fw-bold mb-3">{{ post.title }}</h1>  <!-- ✅ 게시글 제목 -->
+                
+                <p class="text-muted">
+                    <strong>작성자ID:</strong> {{ post.author.username }} | 
+                    <strong>작성일:</strong> {{ post.created_at|date:"Y-m-d H:i" }}
+                </p>
 
-<hr>
+                <hr>
 
-<p>{{ post.content|linebreaks }}</p>  <!-- ✅ 게시글 내용 표시 (줄바꿈 적용) -->
+                <!-- ✅ 게시글 내용 -->
+                <p class="fs-5">{{ post.content|linebreaks }}</p>  
 
-<!-- ✅ 수정 및 삭제 버튼 (작성자만 보이도록 설정 가능) -->
-{% if user == post.author %}
-    <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">수정</a>
+                <hr class="my-4">
 
-    <form action="{% url 'post_delete' post.pk %}" method="post" style="display: inline;">
-        {% csrf_token %}  <!-- ✅ CSRF 토큰 추가 -->
-        <button type="submit" class="btn btn-danger">삭제</button>
-    </form>
-{% endif %}
-
-<a href="{% url 'post_list' %}" class="btn btn-secondary">목록으로 돌아가기</a>
+                <!-- ✅ 버튼 그룹 -->
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'post_list' %}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
+                    
+                    {% if user == post.author %}
+                        <div>
+                            <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">수정</a>
+                            <form action="{% url 'post_delete' post.pk %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">삭제</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

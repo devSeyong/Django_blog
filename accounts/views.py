@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from .forms import SignUpForm, CustomAuthenticationForm, ProfileUpdateForm
 from .models import User
+from blog.models import Post
 
 
 # ✅ 회원가입 뷰
@@ -14,6 +15,13 @@ class SignUpView(CreateView):
     form_class = SignUpForm
     template_name = "accounts/signup.html"
     success_url = reverse_lazy("login")
+
+    def form_invalid(self, form):
+        """회원가입 실패 시 오류 메시지를 추가"""
+        messages.error(
+            self.request, "회원가입에 실패했습니다. 입력한 정보를 확인해주세요."
+        )
+        return super().form_invalid(form)
 
 
 # ✅ 로그인 뷰
@@ -44,18 +52,35 @@ class ProfileView(LoginRequiredMixin, DetailView):
         """로그인한 사용자가 자신의 프로필을 조회할 때"""
         return self.request.user
 
+    def get_context_data(self, **kwargs):
+        """내가 작성한 게시글 목록을 컨텍스트에 추가"""
+        context = super().get_context_data(**kwargs)
+        context["user_posts"] = Post.objects.filter(author=self.request.user).order_by(
+            "-created_at"
+        )  # ✅ 최신순 정렬
+        return context
+
 
 # ✅ 특정 유저의 프로필 조회 (로그인한 사용자만 볼 수 있도록 제한)
 class UserProfileView(LoginRequiredMixin, DetailView):
     model = User
-    template_name = "accounts/profile.html"  # ✅ 기존 profile.html 재사용
+    template_name = "accounts/profile.html"
+    context_object_name = "user_profile"
 
     def get_object(self):
-        """로그인한 사용자만 특정 유저의 프로필을 볼 수 있도록 제한"""
+        """프로필 조회 (로그인한 사용자만 접근 가능)"""
         return get_object_or_404(User, pk=self.kwargs.get("pk"))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_profile = self.get_object()
+        context["is_owner"] = (
+            self.request.user == user_profile
+        )  # ✅ 로그인한 사용자가 해당 프로필 소유자인지 확인
+        return context
 
-# ✅ 프로필 수정 뷰 (로그인한 사용자만 수정 가능)
+
+# ✅ 프로필 수정 뷰 (로그인한 사용자만 가능)
 class ProfileEditView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileUpdateForm

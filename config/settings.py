@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "blog",
+    "widget_tweaks",
 ]  # accounts, blog 앱 추가
 
 MIDDLEWARE = [
@@ -126,6 +127,7 @@ MEDIA_ROOT = BASE_DIR / "media"  # 미디어 파일 디렉토리 추가
 
 if DEBUG:
     import mimetypes
+
     mimetypes.add_type("image/svg+xml", ".svg", True)
 
 # Default primary key field type
@@ -133,6 +135,6 @@ if DEBUG:
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = "/blog"  # 로그인 후 이동할 URL
+LOGIN_REDIRECT_URL = "/"  # 로그인 후 이동할 URL
 
 LOGIN_URL = "/accounts/login/"  # 로그인 URL

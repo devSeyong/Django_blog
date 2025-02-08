@@ -1,0 +1,84 @@
+/* ✅ 전체 페이지 배경 */
+.page-background {
+    background: url('../img/background.jpg') no-repeat center center/cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ✅ 로그인/회원가입 폼 스타일 */
+.auth-box {
+    width: 100%;
+    max-width: 800px;  /* ✅ 너비 확장 */
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ 로그인/회원가입 폼 컨테이너 정렬 */
+.auth-container {
+    width: 100%;
+    max-width: 700px;  /* ✅ 폼 최대 너비 설정 */
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    margin: 5vh auto;
+}
+
+/* ✅ 로그인/회원가입 폼 내부 요소 정렬 */
+.auth-container form {
+    text-align: left;
+}
+
+/* ✅ 입력 필드 스타일 */
+.auth-container input {
+    width: 100%;
+    height: 55px;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+/* ✅ 버튼 스타일 */
+.auth-container button {
+    width: 100%;
+    height: 55px;
+    font-size: 18px;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #0259fa;
+    color: white;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+/* ✅ 버튼 hover 효과 */
+.auth-container button:hover {
+    background: rgb(7, 50, 245);
+}
+
+/* ✅ 반응형 (모바일 최적화) */
+@media (max-width: 768px) {
+    .auth-box {
+        max-width: 95%;
+    }
+    form input, form textarea, form select, form button {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-box {
+        max-width: 100%;
+    }
+    form input, form textarea, form select, form button {
+        max-width: 100%;
+    }
+}

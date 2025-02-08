@@ -1,16 +1,19 @@
 {% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
 
 {% block content %}
-<h1>게시글 삭제</h1>
-<p>정말 이 게시글을 삭제하시겠습니까?</p>
+<div class="container mt-5">
+    <h1 class="text-danger">게시글 삭제</h1>
+    <p>정말 이 게시글을 삭제하시겠습니까?</p>
 
-<h3>{{ post.title }}</h3>
-<p>{{ post.content|linebreaks }}</p>
+    <div class="card p-3 mb-3">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.content|linebreaks }}</p>
+    </div>
 
-<form method="post">
-    {% csrf_token %}  <!-- ✅ CSRF 토큰 추가 -->
-    <button type="submit" class="btn btn-danger">삭제</button>
-</form>
-
-<a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">취소</a>
+    <form method="post">
+        {% csrf_token %}  <!-- ✅ CSRF 토큰 추가 -->
+        <button type="submit" class="btn btn-danger">삭제</button>
+        <a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">취소</a>
+    </form>
+</div>
 {% endblock %}

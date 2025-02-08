@@ -1,25 +1,58 @@
-{% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}게시글 목록{% endblock %}
 
 {% block content %}
-<h1>게시글 목록</h1>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">개인 블로그</h2>
 
-<a href="{% url 'post_create' %}" class="btn btn-primary">새 게시글 작성</a>  <!-- ✅ 글 작성 버튼 -->
+    <!-- ✅ 게시글 작성 버튼 (로그인한 사용자만 보이도록 설정) -->
+    <div class="d-flex justify-content-end mb-3">
+        {% if user.is_authenticated %}
+            <a href="{% url 'post_create' %}" class="btn btn-success">+ 새 게시글 작성</a>
+        {% endif %}
+    </div>
 
-<ul class="list-group mt-3">
-    {% for post in posts %}
-        <li class="list-group-item">
-            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>  
+    <!-- ✅ 검색 폼 -->
+    <form method="GET" action="{% url 'post_list' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="제목으로 검색"
+                   value="{{ search_query }}">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </div>
+    </form>
 
-            {% if user.is_authenticated %}
-                <span class="text-muted">아이디: <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a></span>
-            {% else %}
-                <span class="text-muted">작성자: {{ post.author.username }}</span>
-            {% endif %}
-
-            <span class="text-muted"> | 작성일: {{ post.created_at|date:"Y-m-d H:i" }}</span>
-        </li>
-    {% empty %}
-        <li class="list-group-item text-center">게시글이 없습니다.</li>
-    {% endfor %}
-</ul>
+    <!-- ✅ 게시글 목록 -->
+    <div class="list-group">
+        {% for post in posts %}
+            <a href="{% url 'post_detail' post.pk %}" class="list-group-item list-group-item-action">
+                <div class="d-flex align-items-center">
+                    
+                    <!-- ✅ 썸네일이 있는 경우만 표시 -->
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="게시글 이미지" class="rounded me-3" width="100" height="80" style="object-fit: cover;">
+                    {% endif %}
+                    
+                    <!-- ✅ 게시글 정보 -->
+                    <div>
+                        <h5 class="mb-1">
+                            {% if search_query and search_query in post.title %}
+                                {{ post.title|safe|linebreaksbr }}
+                            {% else %}
+                                {{ post.title }}
+                            {% endif %}
+                        </h5>
+                        <p class="text-muted small mb-1">
+                            작성자ID: {{ post.author.username }} | 작성일: {{ post.created_at|date:"Y-m-d H:i" }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-center">검색 결과가 없습니다.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
+
