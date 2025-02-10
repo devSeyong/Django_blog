@@ -1,18 +1,22 @@
+from .models import User
+from blog.models import Post
 from django.views import View
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, render
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, render, redirect
 from .forms import (
     SignUpForm,
     CustomAuthenticationForm,
     ProfileUpdateForm,
     FindUsernameForm,
+    PasswordResetRequestForm,
+    VerifyResetCodeForm,
+    PasswordResetForm,
 )
-from .models import User
-from blog.models import Post
 
 
 # ✅ 회원가입 뷰
@@ -131,3 +135,81 @@ class FindUsernameView(View):
                 )
 
         return render(request, self.template_name, {"form": form})
+
+
+# ✅ 비밀번호 재설정 뷰
+class PasswordResetRequestView(View):
+    template_name = "accounts/password_reset_request.html"
+
+    def get(self, request):
+        form = PasswordResetRequestForm()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request):
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            email = form.cleaned_data["email"]
+            user = User.objects.filter(username=username, email=email).first()
+            if user:
+                code = user.generate_reset_code()  # 인증코드 생성 후 저장
+                send_mail(
+                    "비밀번호 재설정 인증코드",
+                    f"비밀번호 재설정 인증코드: {code} (10분 내 입력)",
+                    "no-reply@yourdomain.com",
+                    [email],
+                )
+                return redirect(
+                    "verify_reset_code", email=email
+                )  # 인증코드 입력 페이지로 이동
+        return render(request, self.template_name, {"form": form})
+
+
+# ✅ 인증코드 확인 뷰
+class VerifyResetCodeView(View):
+    template_name = "accounts/verify_reset_code.html"
+
+    def get(self, request, email):
+        form = VerifyResetCodeForm(initial={"email": email})
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, email):  # ✅ email을 인자로 추가
+        form = VerifyResetCodeForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data["code"]
+            user = User.objects.filter(email=email).first()
+            if user and user.is_reset_code_valid(code):
+                return redirect(
+                    "password_reset", email=email, code=code
+                )  # ✅ 이메일과 인증코드 전달
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "error": "인증코드가 잘못되었거나 만료되었습니다."},
+        )
+
+
+# ✅ 비밀번호 재설정 뷰
+class PasswordResetView(View):
+    template_name = "accounts/password_reset.html"
+
+    def get(self, request, email, code):  # ✅ email, code 인자 추가
+        form = PasswordResetForm(initial={"email": email, "code": code})
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, email, code):  # ✅ email, code 인자 추가
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            new_password = form.cleaned_data["new_password"]
+            user = User.objects.filter(email=email).first()
+            if user and user.is_reset_code_valid(code):
+                user.set_password(new_password)
+                user.reset_code = None  # ✅ 인증코드 초기화
+                user.reset_code_expiry = None
+                user.save()
+                return redirect("login")  # ✅ 로그인 페이지로 이동
+        return render(
+            request,
+            self.template_name,
+            {"form": form, "error": "비밀번호 재설정에 실패했습니다."},
+        )

@@ -140,3 +140,11 @@ LOGIN_URL = "/accounts/login/"  # 로그인 URL
 LOGIN_REDIRECT_URL = "/"  # 로그인 후 이동할 URL
 
 LOGOUT_REDIRECT_URL = "/"  # 로그아웃 후 이동할 URL
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"  # Gmail SMTP 서버
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "choseyong0213@gmail.com"  # 📌 발송할 Gmail 주소
+EMAIL_HOST_PASSWORD = "ufzz nqsa gejr kdhd"  # 📌 Google 앱 비밀번호 (일반 비밀번호 X)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

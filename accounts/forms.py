@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 # ✅ 회원가입 폼 (UserCreationForm 상속)
@@ -149,4 +149,72 @@ class FindUsernameForm(forms.Form):
                 "입력하신 정보로 가입된 계정을 찾을 수 없습니다."
             )
 
+        return cleaned_data
+
+
+# ✅ 비밀번호 변경 폼
+class PasswordResetRequestForm(forms.Form):
+    username = forms.CharField(
+        label="아이디",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "가입한 아이디 입력"}
+        ),
+    )
+    email = forms.EmailField(
+        label="이메일",
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "가입한 이메일 입력"}
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        email = cleaned_data.get("email")
+
+        user = User.objects.filter(username=username, email=email).first()
+        if not user:
+            raise forms.ValidationError(
+                "입력하신 아이디와 이메일이 일치하는 계정을 찾을 수 없습니다. 다시 확인해주세요."
+            )
+
+        return cleaned_data
+
+
+# ✅ 인증코드 확인 폼
+class VerifyResetCodeForm(forms.Form):
+    email = forms.EmailField(widget=forms.HiddenInput())  # 사용자가 입력한 이메일 유지
+    code = forms.CharField(
+        label="인증코드",
+        max_length=6,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "이메일로 받은 인증코드 입력",
+            }
+        ),
+    )
+
+
+# ✅ 비밀번호 변경 폼
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(widget=forms.HiddenInput())  # 사용자가 입력한 이메일 유지
+    code = forms.CharField(widget=forms.HiddenInput())  # 인증코드 유지
+    new_password = forms.CharField(
+        label="새 비밀번호",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "새 비밀번호 입력"}
+        ),
+    )
+    confirm_password = forms.CharField(
+        label="새 비밀번호 확인",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "비밀번호 다시 입력"}
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data["new_password"] != cleaned_data["confirm_password"]:
+            raise forms.ValidationError("비밀번호가 일치하지 않습니다.")
         return cleaned_data

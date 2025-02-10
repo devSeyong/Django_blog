@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse  # ✅ URL 역방향 매핑
+from django.utils.timezone import now, timedelta
+import random
 
 
 class User(AbstractUser):
@@ -10,6 +12,8 @@ class User(AbstractUser):
     profile_image = models.ImageField(
         upload_to="profile_images/", blank=True, null=True
     )
+    reset_code = models.CharField(max_length=6, blank=True, null=True)
+    reset_code_expiry = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.last_name}{self.first_name} ({self.username})"
@@ -36,3 +40,15 @@ class User(AbstractUser):
     def get_absolute_url(self):
         """작성자의 프로필 페이지로 이동하는 URL 반환"""
         return reverse("user_profile", args=[self.pk])  # ✅ URL 역방향 매핑
+
+    def generate_reset_code(self):
+        """6자리 랜덤 숫자 생성 후 저장"""
+        code = str(random.randint(100000, 999999))  # 6자리 랜덤 코드 생성
+        self.reset_code = code
+        self.reset_code_expiry = now() + timedelta(minutes=10)  # 10분 후 만료
+        self.save()
+        return code
+
+    def is_reset_code_valid(self, code):
+        """입력한 코드가 맞고, 만료되지 않았는지 확인"""
+        return self.reset_code == code and self.reset_code_expiry > now()
