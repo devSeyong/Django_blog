@@ -135,6 +135,8 @@ if DEBUG:
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+LOGIN_URL = "/accounts/login/"  # 로그인 URL
+
 LOGIN_REDIRECT_URL = "/"  # 로그인 후 이동할 URL
 
-LOGIN_URL = "/accounts/login/"  # 로그인 URL
+LOGOUT_REDIRECT_URL = "/"  # 로그아웃 후 이동할 URL

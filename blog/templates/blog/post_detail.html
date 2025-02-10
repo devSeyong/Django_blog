@@ -1,31 +1,31 @@
-{% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="bg-light p-5 rounded-3 shadow-sm">  <!-- ✅ 부드러운 배경 적용 -->
-                <h1 class="fw-bold mb-3">{{ post.title }}</h1>  <!-- ✅ 게시글 제목 -->
+            <div class="bg-light p-5 rounded-3 shadow-sm">  
+                <h1 class="fw-bold mb-3">{{ post.title }}</h1>
                 
                 <p class="text-muted">
-                    <strong>작성자ID:</strong> {{ post.author.username }} | 
-                    <strong>작성일:</strong> {{ post.created_at|date:"Y-m-d H:i" }}
+                    <strong>작성자:</strong>
+                    {% if post.author %}
+                        <a href="{% url 'user_profile' post.author.pk %}" class="text-decoration-none fw-bold">
+                            {{ post.author.username }}
+                        </a>
+                    {% else %}
+                        <span class="text-muted">알 수 없음</span>
+                    {% endif %}
+                    | <strong>작성일:</strong> {{ post.created_at|date:"Y-m-d H:i" }}
                 </p>
-
                 <hr>
-
-                <!-- ✅ 게시글 내용 -->
                 <p class="fs-5">{{ post.content|linebreaks }}</p>  
-
                 <hr class="my-4">
-
-                <!-- ✅ 버튼 그룹 -->
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <a href="{% url 'post_list' %}" class="btn btn-outline-secondary">목록으로 돌아가기</a>
-                    
                     {% if user == post.author %}
-                        <div>
-                            <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">수정</a>
+                        <div class="d-flex">
+                            <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary me-2">수정</a>
                             <form action="{% url 'post_delete' post.pk %}" method="post" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger">삭제</button>
@@ -33,8 +33,163 @@
                         </div>
                     {% endif %}
                 </div>
+                <hr>
+                {% if user.is_authenticated %}
+                    <form id="comment-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea id="comment-content" class="form-control" rows="3" placeholder="댓글을 입력하세요..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    </form>
+                {% else %}
+                    <p><a href="{% url 'login' %}">로그인</a> 후에 댓글을 작성할 수 있습니다.</p>
+                {% endif %}
+                <hr>
+                <h3>댓글</h3>
+                <ul class="list-group" id="comment-list">
+                    {% for comment in post.comments.all %}
+                        <li class="list-group-item" id="comment-{{ comment.id }}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p><strong><a href="{% url 'user_profile' comment.author.pk %}" class="text-decoration-none fw-bold">
+                                    {{ comment.author.username }}
+                                </a></strong> - {{ comment.created_at|date:"Y-m-d H:i" }}</p>
+                                {% if comment.author == user %}
+                                <div class="d-flex">
+                                    <button class="btn btn-sm text-muted edit-btn" data-comment-id="{{ comment.id }}">✏️</button>
+                                    <button class="btn btn-sm text-muted delete-btn" data-comment-id="{{ comment.id }}">❌</button>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p id="comment-content-{{ comment.id }}">{{ comment.content }}</p>
+                            {% if comment.author == user %}
+                            <div class="edit-form d-none mt-2 w-100" id="edit-form-{{ comment.id }}">
+                                <textarea class="form-control mb-2" id="edit-content-{{ comment.id }}" rows="4">{{ comment.content }}</textarea>
+                                <div class="d-flex justify-content-start mt-1">
+                                    <button class="btn btn-sm text-muted save-edit-btn" data-comment-id="{{ comment.id }}">저장</button>
+                                    <button class="btn btn-sm text-muted cancel-edit-btn" data-comment-id="{{ comment.id }}">취소</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+<!-- ✅ 댓글 AJAX 처리 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let commentForm = document.getElementById("comment-form");
+        
+            if (commentForm) {
+                commentForm.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    let content = document.getElementById("comment-content").value;
+                    let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                
+                    fetch("{% url 'add_comment' post.pk %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": csrfToken
+                        },
+                        body: `content=${encodeURIComponent(content)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            let newComment = `
+                                <li class="list-group-item d-flex justify-content-between align-items-center" id="comment-${data.comment_id}">
+                                    <div>
+                                        <p><strong>${data.author}:</strong> <span id="comment-content-${data.comment_id}">${data.content}</span></p>
+                                    </div>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm text-muted edit-btn" data-comment-id="${data.comment_id}">✏️</button>
+                                        <button class="btn btn-sm text-muted delete-btn" data-comment-id="${data.comment_id}">❌</button>
+                                    </div>
+                                    <div class="edit-form d-none mt-2" id="edit-form-${data.comment_id}">
+                                        <textarea class="form-control mb-2" id="edit-content-${data.comment_id}">${data.content}</textarea>
+                                        <button class="btn btn-sm btn-success save-edit-btn" data-comment-id="${data.comment_id}">💾 저장</button>
+                                        <button class="btn btn-sm btn-secondary cancel-edit-btn" data-comment-id="${data.comment_id}">취소</button>
+                                    </div>
+                                </li>`;
+                            document.getElementById("comment-list").innerHTML += newComment;
+                            document.getElementById("comment-content").value = "";
+                            
+                            attachCommentEventListeners(); // ✅ 새 댓글에도 이벤트 리스너 추가
+                        }
+                    });
+                });
+            }
+        
+            function attachCommentEventListeners() {
+                document.querySelectorAll(".edit-btn").forEach(button => {
+                    button.addEventListener("click", function () {
+                        let commentId = this.getAttribute("data-comment-id");
+                        let editForm = document.getElementById(`edit-form-${commentId}`);
+                        if (editForm.classList.contains("d-none")) {
+                            editForm.classList.remove("d-none"); // ✅ 수정 폼 보이기
+                        } else {
+                            editForm.classList.add("d-none"); // ✅ 다시 누르면 닫기
+                        }
+                    });
+                });
+            
+                document.querySelectorAll(".cancel-edit-btn").forEach(button => {
+                    button.addEventListener("click", function () {
+                        let commentId = this.getAttribute("data-comment-id");
+                        document.getElementById(`edit-form-${commentId}`).classList.add("d-none");
+                    });
+                });
+            
+                document.querySelectorAll(".save-edit-btn").forEach(button => {
+                    button.addEventListener("click", function () {
+                        let commentId = this.getAttribute("data-comment-id");
+                        let newContent = document.getElementById(`edit-content-${commentId}`).value;
+                        let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                    
+                        fetch(`/comment/${commentId}/edit/`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "X-CSRFToken": csrfToken
+                            },
+                            body: `content=${encodeURIComponent(newContent)}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById(`comment-content-${commentId}`).innerText = data.content;
+                                document.getElementById(`edit-form-${commentId}`).classList.add("d-none"); // ✅ 수정 완료 후 폼 닫기
+                            }
+                        });
+                    });
+                });
+            
+                document.querySelectorAll(".delete-btn").forEach(button => {
+                    button.addEventListener("click", function () {
+                        let commentId = this.getAttribute("data-comment-id");
+                        let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                    
+                        fetch(`/comment/${commentId}/delete/`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": csrfToken
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById(`comment-${commentId}`).remove();
+                            }
+                        });
+                    });
+                });
+            }
+        
+            attachCommentEventListeners(); // ✅ 기존 댓글에도 이벤트 리스너 적용
+        });
+        </script>
+    </div>
+{% endblock %}    

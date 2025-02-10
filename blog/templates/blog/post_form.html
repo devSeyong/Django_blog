@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-5">  <!-- ✅ 가로 폭 최대화 -->
+<div class="container-fluid mt-5">
     <div class="row justify-content-center">
-        <div class="col-lg-10 col-md-12">  <!-- ✅ 최대 폭 확장 -->
+        <div class="col-lg-10 col-md-12">
             <h2 class="text-center mb-4 fw-bold">
                 {% if object %}게시글 수정{% else %}새 게시글 작성{% endif %}
             </h2>
@@ -17,19 +17,16 @@
             <form method="post" class="p-5 bg-light rounded-3 shadow-sm">
                 {% csrf_token %}
 
-                <!-- 제목 입력 -->
                 <div class="mb-4">
                     <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">제목</label>
-                    {{ form.title|add_class:"form-control form-control-lg w-100" }}  <!-- ✅ 가로 확장 -->
+                    {{ form.title|add_class:"form-control form-control-lg w-100" }}
                 </div>
 
-                <!-- 내용 입력 -->
                 <div class="mb-4">
                     <label for="{{ form.content.id_for_label }}" class="form-label fw-semibold">내용</label>
-                    {{ form.content|add_class:"form-control w-100" }}  <!-- ✅ 가로 확장 -->
+                    {{ form.content|add_class:"form-control w-100" }}
                 </div>
 
-                <!-- 버튼 그룹 -->
                 <div class="d-flex justify-content-between">
                     <a href="{% url 'post_list' %}" class="btn btn-outline-secondary btn-lg">목록으로 돌아가기</a>
                     <button type="submit" class="btn btn-success btn-lg px-4">저장하기</button>

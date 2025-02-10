@@ -101,9 +101,7 @@ class ProfileUpdateForm(forms.ModelForm):
     profile_image = forms.ImageField(
         label="프로필 사진",
         required=False,
-        widget=forms.ClearableFileInput(
-            attrs={"class": "form-control"}
-        ),  # ✅ Bootstrap 스타일 적용
+        widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
     )
 
     class Meta:
@@ -111,12 +109,44 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ["full_name", "bio", "profile_image"]
 
     def save(self, commit=True):
-        """full_name을 User 모델의 first_name 필드에 저장"""
         user = super().save(commit=False)
-        user.first_name = self.cleaned_data[
-            "full_name"
-        ]  # ✅ set_full_name() 대신 first_name 사용
-
+        user.set_full_name(self.cleaned_data["full_name"])
         if commit:
             user.save()
         return user
+
+
+# ✅ 아이디 찾기 폼
+class FindUsernameForm(forms.Form):
+    full_name = forms.CharField(
+        label="이름",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "이름 (예: 홍길동)"}
+        ),
+    )
+    email = forms.EmailField(
+        label="가입한 이메일",
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "이메일 입력"}
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        full_name = cleaned_data.get("full_name")
+        email = cleaned_data.get("email")
+
+        users = User.objects.all()
+        found_user = None
+
+        for user in users:
+            if user.full_name == full_name and user.email == email:
+                found_user = user
+                break
+
+        if not found_user:
+            raise forms.ValidationError(
+                "입력하신 정보로 가입된 계정을 찾을 수 없습니다."
+            )
+
+        return cleaned_data

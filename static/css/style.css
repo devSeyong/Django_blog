@@ -82,3 +82,37 @@
         max-width: 100%;
     }
 }
+
+/* ✅ 제목 링크 스타일 */
+.list-group-item h5 a {
+    color: #333;  /* 기본 색상 (어두운 회색) */
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.list-group-item h5 a:hover {
+    color: #007bff;  /* 호버 시 파란색 */
+}
+
+/* ✅ 작성자 링크 스타일 */
+.list-group-item p a {
+    color: #666;  /* 기본 색상 (회색) */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+.list-group-item p a:hover {
+    color: #ff5733;  /* 호버 시 주황색 */
+}
+
+/* ✅ 네비게이션 바 링크 */
+.navbar a {
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar a:hover {
+    color: #007bff;
+}

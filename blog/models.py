@@ -1,14 +1,24 @@
 from django.db import models
-from accounts.models import User  # 사용자 모델 참조
+from accounts.models import User
 
 
-# 게시글 모델
 class Post(models.Model):
-    title = models.CharField(max_length=255)  # 게시글 제목
-    content = models.TextField()  # 게시글 내용
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # null 허용
-    created_at = models.DateTimeField(auto_now_add=True)  # 작성일
-    updated_at = models.DateTimeField(auto_now=True)  # 수정일
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.author.username}의 댓글: {self.content[:20]}"

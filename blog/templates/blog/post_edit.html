@@ -1,11 +1,18 @@
-{% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
+{% extends 'base.html' %}
 
 {% block content %}
 <h1>게시글 수정</h1>
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}  <!-- ✅ Django 폼 자동 렌더링 -->
+    <div class="mb-3">
+        <label for="id_title" class="form-label">제목</label>
+        {{ form.title }}
+    </div>
+    <div class="mb-3">
+        <label for="id_content" class="form-label">내용</label>
+        <textarea id="id_content" name="content" class="form-control">{{ form.instance.content }}</textarea>
+    </div>
     <button type="submit" class="btn btn-success">수정 완료</button>
 </form>
 

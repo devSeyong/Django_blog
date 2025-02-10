@@ -1,4 +1,4 @@
-{% extends 'base.html' %}  <!-- ✅ 네비게이션 바 포함 -->
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="container mt-5">
@@ -7,11 +7,10 @@
 
     <div class="card p-3 mb-3">
         <h3>{{ post.title }}</h3>
-        <p>{{ post.content|linebreaks }}</p>
     </div>
 
     <form method="post">
-        {% csrf_token %}  <!-- ✅ CSRF 토큰 추가 -->
+        {% csrf_token %}
         <button type="submit" class="btn btn-danger">삭제</button>
         <a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">취소</a>
     </form>

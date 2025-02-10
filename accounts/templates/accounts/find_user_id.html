@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">아이디 찾기</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">아이디 찾기</button>
+    </form>
+
+    {% if success %}
+        <div class="alert alert-success mt-3">
+            가입된 아이디: <strong>{{ masked_username }}</strong>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-3">
+        <a href="{% url 'login' %}" class="btn btn-primary px-3 py-1 fw-semibold shadow-sm">
+            🔑 로그인하러 가기
+        </a>
+    </div>
+
+</div>
+{% endblock %}

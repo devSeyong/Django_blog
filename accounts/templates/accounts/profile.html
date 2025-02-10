@@ -2,45 +2,45 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="mb-4">{{ user.username }}님의 프로필</h1>
+    <h1 class="mb-4">{{ user_profile.username|default:user.username }}님의 프로필</h1>
 
-    <!-- ✅ 프로필 사진 -->
-    {% if user.profile_image %}
-        <div class="mb-3">
-            <img src="{{ user.profile_image.url }}" alt="프로필 사진" width="150" class="rounded-circle shadow">
-        </div>
+        <!-- ✅ 프로필 사진 -->
+    {% if user_profile.profile_image %}
+    <div class="mb-3">
+        <img src="{{ user_profile.profile_image.url }}" alt="프로필 사진" width="150" class="rounded-circle shadow">
+    </div>
     {% else %}
-        <p class="text-muted">프로필 사진이 없습니다.</p>
+    <p class="text-muted">프로필 사진이 없습니다.</p>
     {% endif %}
-
+    
     <!-- ✅ 프로필 정보 -->
-    <p><strong>아이디:</strong> {{ user.username }}</p>
-    <p><strong>이메일:</strong> {{ user.email }}</p>
-    <p><strong>이름:</strong> {{ user.full_name }}</p>
-    <p><strong>자기소개:</strong> {{ user.bio|default:"자기소개가 없습니다." }}</p>
-
-    <!-- ✅ 프로필 수정 버튼 (본인 프로필일 경우에만 표시) -->
-    {% if user == request.user %}
-        <a href="{% url 'profile_edit' %}" class="btn btn-primary">프로필 수정</a>
+    <p><strong>아이디:</strong> {{ user_profile.username|default:user.username }}</p>
+    <p><strong>이메일:</strong> {{ user_profile.email|default:user.email }}</p>
+    <p><strong>이름:</strong> {{ user_profile.full_name|default:user.full_name }}</p>
+    <p><strong>자기소개:</strong> {{ user_profile.bio|default:user.bio|default:"자기소개가 없습니다." }}</p>
+    
+    <!-- ✅ 본인 프로필일 경우에만 수정 버튼 표시 -->
+    {% if user_profile == request.user %}
+    <a href="{% url 'profile_edit' %}" class="btn btn-primary">프로필 수정</a>
     {% endif %}
-
+    
     <hr>
-
+    
     <!-- ✅ 내가 작성한 게시글 목록 -->
-    <h3>내가 작성한 게시글</h3>
-    {% if user_posts|length > 0 %}
-        <ul class="list-group">
-            {% for post in user_posts %}
-                <li class="list-group-item">
-                    <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
-                        {{ post.title }}
-                    </a>
-                    <span class="text-muted small"> ({{ post.created_at|date:"Y-m-d H:i" }})</span>
-                </li>
-            {% endfor %}
-        </ul>
+    <h3>{{ user_profile.username|default:user.username }}님의 게시글</h3>
+    {% if user_posts %}
+    <ul class="list-group">
+        {% for post in user_posts %}
+            <li class="list-group-item">
+                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                    {{ post.title }}
+                </a>
+                <span class="text-muted small"> ({{ post.created_at|date:"Y-m-d H:i" }})</span>
+            </li>
+        {% endfor %}
+    </ul>
     {% else %}
-        <p class="text-muted">아직 작성한 게시글이 없습니다.</p>
+    <p class="text-muted">아직 작성한 게시글이 없습니다.</p>
     {% endif %}
 </div>
 {% endblock %}
