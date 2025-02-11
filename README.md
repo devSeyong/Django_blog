@@ -83,7 +83,8 @@
 ## ⚙️ 설치 및 실행 방법
 ### 1️⃣ 저장소 클론
 ```bash
-git clone [repository URL]
+git clone https://github.com/devSeyong/Django_blog.git
+cd Django_blog
 ```
 ### 2️⃣ 가상환경 생성 및 활성화
 ```bash
