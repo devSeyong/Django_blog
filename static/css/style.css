@@ -1,6 +1,6 @@
 /* ✅ 전체 페이지 배경 */
 .page-background {
-    background: url('../img/background.jpg') no-repeat center center/cover;
+    background: url('/static/img/background.jpg') no-repeat center center/cover;
     min-height: 100vh;
     display: flex;
     flex-direction: column;

@@ -31,7 +31,7 @@ class PostListView(ListView):
                 | Q(author__username__icontains=search_query)
             )
 
-        return queryset.order_by("-created_at")
+        return queryset.order_by("-created_at")  # ✅ 최신순 정렬
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
