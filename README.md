@@ -4,19 +4,19 @@
 **Django 기반의 블로그 플랫폼**  
 사용자가 게시글을 작성하고 댓글을 통해 소통할 수 있는 블로그 서비스입니다.
 
----
+
 
 ## 📅 프로젝트 기간
 - 2025년 2월 5일 ~ 2월 11일
 
----
+
 
 ## 🛠 기술 스택
 - **Backend**: Python 3.13, Django 5.1, SQLite3  
 - **Frontend**: Django Template, Bootstrap, HTML/CSS, JavaScript  
 - **Library**: django-widget-tweaks(폼 렌더링), Pillow(이미지 처리)
 
----
+
 
 ## 💡 구현된 기능
 ### 1️⃣ 사용자 관리 (`accounts` 앱)
@@ -103,6 +103,9 @@ python manage.py migrate
 ```bash
 python manage.py runserver
 ```
+---
+
+![ERD](https://github.com/user-attachments/assets/f4a1b168-6fc4-43e4-8549-2cb3c4cb1407)
 
 ---
 
@@ -178,6 +181,10 @@ python manage.py runserver
 ### 테스트 및 마무리 (2월 11일)
 - [✅] 기능 테스트 및 최종 점검
 - [✅] 발표 자료 정리
+
+![WBS최종본](https://github.com/user-attachments/assets/223b9d29-54c8-4eb2-a49e-192a2c7fc93d)
+
+---
 
 
 
