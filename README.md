@@ -187,6 +187,9 @@ python manage.py runserver
 
 ---
 
+ERD
+![ERD](https://github.com/user-attachments/assets/eae75d2e-4a2a-45bb-ac6a-ddd8b8c276cf)
+
 
 
 
